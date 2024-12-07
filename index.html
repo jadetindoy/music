@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notice Me - English Learning Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #4a4a4a;
+            --secondary-color: #6a5acd;
+            --background-color: #f4f4f9;
+            --text-color: #333;
+            --accent-color: #ff6b6b;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .game-header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .game-content {
+            padding: 30px;
+        }
+
+        .lyrics-section {
+            margin-bottom: 20px;
+        }
+
+        .lyrics-text {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            font-size: 1.1rem;
+        }
+
+        .audio-player {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .quiz-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .quiz-question {
+            background-color: #f1f1f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .answer-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .answer-btn:hover, .answer-btn:focus {
+            background-color: var(--secondary-color);
+            outline: none;
+        }
+
+        .answer-btn.correct {
+            background-color: #4caf50;
+        }
+
+        .answer-btn.incorrect {
+            background-color: var(--accent-color);
+        }
+
+        .explanation {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            margin-top: 15px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .result-section {
+            text-align: center;
+            display: none;
+        }
+
+        .result-score {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        .audio-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .audio-player {
+            width: 100%;
+            border-radius: 10px;
+            height: 40px;
+        }
+
+        .audio-player::-webkit-media-controls-panel {
+            background-color: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .audio-player::-webkit-media-controls-play-button {
+            background-color: #1DB954;
+        }
+
+        .audio-player::-webkit-media-controls-volume-slider {
+            background-color: #ddd;
+        }
+
+        .audio-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .audio-description {
+            font-size: 14px;
+            color: #777;
+        }
+
+        @media (max-width: 600px) {
+            .audio-container {
+                width: 90%;
+            }
+        }
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                margin: 10px;
+            }
+
+            .game-content {
+                padding: 15px;
+            }
+
+            .lyrics-text {
+                font-size: 1rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-header">
+            <h1>English Learning Game: "Notice Me"</h1>
+        </div>
+        <div class="game-content">
+            <div class="lyrics-section">
+                <h2>Lyrics Study</h2>
+                <div class="lyrics-text" id="lyrics-text">
+                    <p><strong>[Verse 1]</strong></p>
+                    <p class="lyric-line">Scrolling through the screen, searching for a sign</p>
+                    <p class="lyric-line">Ten likes on my post, but still feeling so blind</p>
+                    <p class="lyric-line">Wanting to be seen, but afraid to be bold</p>
+                    <p class="lyric-line">Hiding in the shadows, my story untold</p>
+        
+                    <p><strong>[Chorus]</strong></p>
+                    <p class="lyric-line">Notice me, can anybody see?</p>
+                    <p class="lyric-line">I'm right here, waiting silently</p>
+                    <p class="lyric-line">Not looking for fame, just a connection true</p>
+                    <p class="lyric-line">Notice me, I'm trying to break through</p>
+        
+                    <p><strong>[Verse 2]</strong></p>
+                    <p class="lyric-line">Cinema seats empty, no one by my side</p>
+                    <p class="lyric-line">Loneliness echoes where my feelings reside</p>
+                    <p class="lyric-line">Social media's noise, but I won't play that game… hmm</p>
+                    <p class="lyric-line">Hoping for real moments, beyond this digital frame</p>
+        
+                    <p><strong>[Chorus]</strong></p>
+                    <p class="lyric-line">Notice me, can anybody see?</p>
+                    <p class="lyric-line">I'm right here, waiting silently</p>
+                    <p class="lyric-line">Not looking for fame, just a connection true</p>
+                    <p class="lyric-line">Notice me, I'm trying to break through</p>
+        
+                    <p><strong>[Bridge]</strong></p>
+                    <p class="lyric-line">I don't want to cry in the dark anymore-more</p>
+                    <p class="lyric-line">I'm reaching out, opening up my heart's door</p>
+                    <p class="lyric-line">No more hiding, no more silent tears</p>
+                    <p class="lyric-line">Just wanting someone to hear my fears</p>
+        
+                    <p><strong>[Final Chorus]</strong></p>
+                    <p class="lyric-line">Notice me, can anybody see?</p>
+                    <p class="lyric-line">I'm right here, breaking free</p>
+                    <p class="lyric-line">Not looking for likes, just a heart that's true</p>
+                    <p class="lyric-line">Notice me, I'm finding my way through</p>
+        
+                    <p><strong>[Outro: Softly]</strong></p>
+                    <p class="lyric-line">Notice me...</p>
+                </div>
+            </div>
+            <audio id="song-audio" class="audio-player" controls>
+                <source src="/BreakingFree.mp3" type="audio/mp3">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button id="start-quiz-btn" class="btn">Start Quiz</button>
+        </div>
+
+        <div class="quiz-section" id="quiz-section">
+            <div class="quiz-question" id="quiz-question">
+                <h3 id="question-text">What does 'feeling so blind' suggest about the speaker's emotional state?</h3>
+                <div id="answer-options">
+                    <button class="answer-btn" data-index="0">They are physically unable to see</button>
+                    <button class="answer-btn" data-index="1">They feel invisible or unnoticed</button>
+                    <button class="answer-btn" data-index="2">They are lost in a dark room</button>
+                    <button class="answer-btn" data-index="3">They are confused about their surroundings</button>
+                </div>
+                <div class="explanation" id="explanation">
+                    <p id="explanation-text">The phrase 'feeling so blind' metaphorically represents feeling unnoticed or invisible, despite being present on social media. It suggests emotional invisibility and a sense of being overlooked.</p>
+                    <button id="next-question-btn" class="btn">Next Question</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-section" id="result-section">
+            <h2>Quiz Completed!</h2>
+            <div class="result-score" id="final-score">0 / 0</div>
+            <button id="restart-btn" class="btn">Restart Game</button>
+        </div>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const gameData = {
+        title: 'Notice Me',
+        lyrics: `[Verse 1:]
+Scrolling through the screen, searching for a sign
+Ten likes on my post, but still feeling so blind
+Wanting to be seen, but afraid to be bold
+Hiding in the shadows, my story untold
+
+[Chorus:]
+Notice me, can anybody see?
+I'm right here, waiting silently
+Not looking for fame, just a connection true
+Notice me, I'm trying to break through
+
+[Verse 2:]
+Cinema seats empty, no one by my side
+Loneliness echoes where my feelings reside
+Social media's noise, but I won't play that game… hmm
+Hoping for real moments, beyond this digital frame
+
+[Chorus:]
+Notice me, can anybody see?
+I'm right here, waiting silently
+Not looking for fame, just a connection true
+Notice me, I'm trying to break through
+
+[Bridge:]
+I don't want to cry in the dark anymore-more
+I'm reaching out, opening up my heart's door
+No more hiding, no more silent tears
+Just wanting someone to hear my fears
+
+[Final Chorus:]
+Notice me, can anybody see?
+I'm right here, breaking free
+Not looking for likes, just a heart that's true
+Notice me, I'm finding my way through
+
+[Outro: Softly]
+Notice me...`,
+        questions: [
+            {
+                question: "What does 'feeling so blind' suggest about the speaker's emotional state?",
+                options: [
+                    "They are physically unable to see",
+                    "They feel invisible or unnoticed",
+                    "They are lost in a dark room",
+                    "They are confused about their surroundings"
+                ],
+                answer: 1, // The correct answer is the second option (index starts from 0)
+                explanation: "The phrase 'feeling so blind' metaphorically represents feeling unnoticed or invisible, despite being present on social media. It suggests emotional invisibility and a sense of being overlooked."
+            },
+            {
+                question: "What is the main theme of the song's lyrics?",
+                options: [
+                    "Social media popularity",
+                    "Wanting to be recognized and understood",
+                    "Traveling the world",
+                    "Romantic relationships"
+                ],
+                answer: 1,
+                explanation: "The song explores the deep desire to be noticed, understood, and make genuine connections beyond superficial social media interactions."
+            },
+            {
+                question: "In the line 'Social media's noise, but I won't play that game', what does the speaker imply?",
+                options: [
+                    "They hate technology",
+                    "They reject superficial online interactions",
+                    "They want more followers",
+                    "They are bad at using social media"
+                ],
+                answer: 1,
+                explanation: "The line suggests the speaker is tired of shallow, performative social media interactions and seeks more meaningful connections."
+            }
+        ]
+    };
+
+    const lyricsText = document.getElementById('lyrics-text');
+    const songAudio = document.getElementById('song-audio');
+    const startQuizBtn = document.getElementById('start-quiz-btn');
+    const quizSection = document.getElementById('quiz-section');
+    const quizQuestion = document.getElementById('quiz-question');
+    const questionText = document.getElementById('question-text');
+    const answerOptions = document.getElementById('answer-options');
+    const nextQuestionBtn = document.getElementById('next-question-btn');
+    const explanation = document.getElementById('explanation');
+    const explanationText = document.getElementById('explanation-text');
+    const resultSection = document.getElementById('result-section');
+    const finalScore = document.getElementById('final-score');
+    const restartBtn = document.getElementById('restart-btn');
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    startQuizBtn.addEventListener('click', startQuiz);
+
+    function startQuiz() {
+        startQuizBtn.style.display = 'none';
+        quizSection.style.display = 'block';
+        quizSection.style.opacity = '1';
+        showQuestion(gameData.questions[currentQuestionIndex]);
+    }
+
+    function showQuestion(question) {
+        questionText.textContent = question.question;
+        answerOptions.innerHTML = '';
+        question.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.classList.add('answer-btn');
+            button.textContent = option;
+            button.setAttribute('data-index', index);
+            button.addEventListener('click', () => checkAnswer(index, question.answer));
+            answerOptions.appendChild(button);
+        });
+    }
+
+    function checkAnswer(selectedIndex, correctIndex) {
+        // Disable all buttons after an answer is selected
+        const buttons = document.querySelectorAll('.answer-btn');
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const index = parseInt(btn.getAttribute('data-index'));
+            if (index === correctIndex) {
+                btn.classList.add('correct');
+            }
+            if (index === selectedIndex && selectedIndex !== correctIndex) {
+                btn.classList.add('incorrect');
+            }
+        });
+
+        if (selectedIndex === correctIndex) score++;
+
+        explanationText.textContent = gameData.questions[currentQuestionIndex].explanation;
+        explanation.style.display = 'block';
+
+        nextQuestionBtn.style.display = 'block';
+    }
+
+    nextQuestionBtn.addEventListener('click', nextQuestion);
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < gameData.questions.length) {
+            explanation.style.display = 'none';
+            nextQuestionBtn.style.display = 'none';
+            showQuestion(gameData.questions[currentQuestionIndex]);
+        } else {
+            endGame();
+        }
+    }
+
+    function endGame() {
+        quizSection.style.display = 'none';
+        resultSection.style.display = 'block';
+        finalScore.textContent = `${score} / ${gameData.questions.length}`;
+    }
+
+    restartBtn.addEventListener('click', restartGame);
+
+    function restartGame() {
+        score = 0;
+        currentQuestionIndex = 0;
+        resultSection.style.display = 'none';
+        startQuizBtn.style.display = 'block';
+    }
+
+    // Sync lyrics with audio
+    songAudio.addEventListener('play', () => {
+        const lyrics = document.querySelectorAll('.lyric-line');
+        setInterval(() => {
+            const currentTime = songAudio.currentTime;
+            lyrics.forEach((line, index) => {
+                const lineStartTime = index * 5;  // Adjust the timing for each line
+                const lineEndTime = (index + 1) * 5;
+
+                if (currentTime >= lineStartTime && currentTime <= lineEndTime) {
+                    line.style.backgroundColor = '#ffd700'; // Highlight current line
+                } else {
+                    line.style.backgroundColor = '';
+                }
+            });
+        }, 500);
+    });
+});
+    </script>
+</body>
+</html>
